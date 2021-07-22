@@ -14,7 +14,7 @@ func Example_array() {
 		if hangul.HasConsonantSuffix(fruit) {
 			fmt.Printf("%s은 맛있다.\n", fruit)
 		} else {
-			fmt.Printf("%s는 맛있다.\n", fruit)
+			fmt.Printf("%s는 맛있다..\n", fruit)
 		}
 	}
 
