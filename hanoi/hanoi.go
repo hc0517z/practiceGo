@@ -1,4 +1,4 @@
-package main
+package hanoi
 
 import (
 	"fmt"
@@ -14,11 +14,7 @@ func Move(n, from, to, via int) {
 	Move(n-1, via, to, from)
 }
 
-func Sample(n int) {
+func Hanoi(n int) {
 	fmt.Println("Number of disks: ", n)
 	Move(n, 1, 2, 3)
-}
-
-func main() {
-	Sample(3)
 }
