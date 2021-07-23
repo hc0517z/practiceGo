@@ -15,10 +15,10 @@ import (
 
 func ensureDir(fileName string) {
 	dirName := filepath.Dir(fileName)
-	if _, serr := os.Stat(dirName); serr != nil {
-		merr := os.MkdirAll(dirName, os.ModePerm)
-		if merr != nil {
-			panic(merr)
+	if _, s := os.Stat(dirName); s != nil {
+		m := os.MkdirAll(dirName, os.ModePerm)
+		if m != nil {
+			panic(m)
 		}
 	}
 }
@@ -40,28 +40,44 @@ func download(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
 	_, err = io.Copy(f, resp.Body)
 	return filename, err
 }
 
-func urlToFilename(rawurl string) (string, error) {
-	url, err := url.Parse(rawurl)
+func urlToFilename(rawUrl string) (string, error) {
+	parse, err := url.Parse(rawUrl)
 	if err != nil {
 		return "", err
 	}
-	return filepath.Base(url.Path), nil
+	return filepath.Base(parse.Path), nil
 }
 
 func writeZip(outFilename string, filenames []string) error {
 
 	ensureDir(outFilename)
 
-	outf, err := os.Create(outFilename)
+	var files []*os.File
+
+	defer func() {
+		for _, file := range files {
+			err := file.Close()
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	outFile, err := os.Create(outFilename)
 	if err != nil {
 		return err
 	}
-	zw := zip.NewWriter(outf)
+	zw := zip.NewWriter(outFile)
 	for _, filename := range filenames {
 		w, err := zw.Create(filename)
 		if err != nil {
@@ -71,7 +87,8 @@ func writeZip(outFilename string, filenames []string) error {
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		files = append(files, f)
+
 		_, err = io.Copy(w, f)
 		if err != nil {
 			return err
@@ -89,14 +106,14 @@ func main() {
 		"https://t1.daumcdn.net/news/201806/15/seouleconomy/20180615151617982vtvw.jpg",
 	}
 
-	for _, url := range urls {
+	for _, u := range urls {
 		wait.Add(1)
 		go func(url string) {
 			defer wait.Done()
 			if _, err := download(url); err != nil {
 				log.Fatal(err)
 			}
-		}(url)
+		}(u)
 	}
 	wait.Wait()
 
