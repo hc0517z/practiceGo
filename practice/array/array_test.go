@@ -3,7 +3,7 @@ package array
 import (
 	"fmt"
 
-	"github.com/hc0517z/practiceGo/hangul"
+	"github.com/hc0517z/practiceGo/practice/hangul"
 )
 
 func Example_array() {
