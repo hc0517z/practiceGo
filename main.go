@@ -19,6 +19,11 @@ func main() {
 		"https://forum.dotnetdev.kr/",
 		"https://github.com/",
 		"https://academy.nomadcoders.co/",
+		"https://www.amazon.com/",
+		"https://www.reddit.com/",
+		"https://www.facebook.com/",
+		"https://www.instagram.com/",
+		"https://okky.kr/",
 	}
 	for _, url := range urls {
 		result := "OK"
