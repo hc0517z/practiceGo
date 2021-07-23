@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 )
@@ -10,8 +9,6 @@ type requestResult struct {
 	url    string
 	status string
 }
-
-var errRequestFailed = errors.New("Request failed")
 
 func main() {
 	var results = make(map[string]string)
