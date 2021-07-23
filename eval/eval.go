@@ -1,9 +1,16 @@
+package eval
+
+import (
+	"strconv"
+	"strings"
+)
+
 func Eval(expr string) int {
 	var ops []string
 	var nums []int
 	pop := func() int {
 		last := nums[len(nums)-1]
-		nums = num[:len(nums)-1]
+		nums = nums[:len(nums)-1]
 		return last
 	}
 
@@ -36,8 +43,22 @@ func Eval(expr string) int {
 		switch token {
 		case "(":
 			ops = append(ops, token)
-
+		case "+", "-":
+			//덧셈과 뺄셈 이상의 우선순위를 가진 사칙연산 적용
+			reduce("+-*/")
+			ops = append(ops, token)
+		case "*", "/":
+			// 곱셈과 나눗셈 이상의 우선순위를 가진 것을 둘뿐
+			reduce("*/")
+			ops = append(ops, token)
+		case ")":
+			// 닫는 괄호는 여는 괄호까지 계산하고 제거
+			reduce("+-*/(")
+		default:
+			num, _ := strconv.Atoi(token)
+			nums = append(nums, num)
 		}
-
 	}
+	reduce("+-*/")
+	return nums[0]
 }
